@@ -13,6 +13,7 @@
         <module>eureka-server</module>
         <module>eureka-client</module>
         <module>api-gateway</module>
+        <module>configuration-server</module>
     </modules>
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
