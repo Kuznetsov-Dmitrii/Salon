@@ -2,36 +2,16 @@ server:
   port: 0
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:8180/realms/salon"
+          jwk-set-uri: "http://localhost:8180/realms/salon/protocol/openid-connect/certs"
+  config:
+    import: optional:configserver:http://localhost:8083
+  cloud:
+    config:
+      uri: http://localhost:8083
   application:
     name: eureka-client
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8081/eureka
-#spring.cloud.config.uri=http://localhost:8083
-#spring.config.import=optional:configserver:http://localhost:8083
-
-
-#spring:
-#  application:
-#    name: eureka-client
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          api-gateway:
-#            client-id: "api-gateway"
-#            client-secret: "0FbfJDquyw2DlAQLPW41gxEjpUC23bBq"
-#            provider: "api-gateway"
-#            scope:
-#              - "openid"
-#              - "profile"
-#            client-authentication-method: "client_secret_basic"
-#            authorization-grant-type: "authorization_code"
-#        provider:
-#          api-gateway:
-#            issuer-uri: "http://localhost:8180/realms/salon"
-##      resourceserver:
-##        jwt:
-##          issuer-uri: "http://localhost:8180/realms/salon"

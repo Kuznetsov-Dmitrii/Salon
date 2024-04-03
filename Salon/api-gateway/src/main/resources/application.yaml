@@ -1,19 +1,16 @@
 server:
   port: 8082
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8081/eureka
+
 spring:
   config:
     import: optional:configserver:http://localhost:8083
   cloud:
     config:
       uri: http://localhost:8083
+    gateway:
+      default-filters: TokenRelay=
   application:
     name: gateway
-  #  main:
-  #    web-application-type: reactive
   security:
     oauth2:
       client:
@@ -30,6 +27,6 @@ spring:
         provider:
           api-gateway:
             issuer-uri: "http://localhost:8180/realms/salon"
-#      resourceserver:
-#        jwt:
-#          issuer-uri: "http://localhost:8180/realms/salon"
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:8180/realms/salon"
