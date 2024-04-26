@@ -1,14 +1,33 @@
 server:
   port: 8082
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
 spring:
-  config:
-    import: optional:configserver:http://localhost:8083
+#  config:
+#    import: optional:configserver:http://localhost:8083
   cloud:
-    config:
-      uri: http://localhost:8083
+#    config:
+#      uri: http://localhost:8083
     gateway:
       default-filters: TokenRelay=
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: test
+          uri: lb://eureka-client
+          predicates:
+            - Path=/test
+            - Method=GET
+        - id: driverr-test
+          uri: lb://eureka-client
+          predicates:
+            - Path=/driver
+            - Method=GET
   application:
     name: gateway
   security:

@@ -2,16 +2,34 @@ server:
   port: 0
 
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/keycloak
+    username: postgres
+    password: 12345
+    driver-class-name: org.postgresql.Driver
+  jpa:
+      generate-ddl: true
+      # show-sql: true # Uncomment to enable SQL logging
+      database: postgresql
+      open-in-view: false
+      properties:
+        hibernate:
+          default_schema: salon
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: "http://localhost:8180/realms/salon"
           jwk-set-uri: "http://localhost:8180/realms/salon/protocol/openid-connect/certs"
-  config:
-    import: optional:configserver:http://localhost:8083
-  cloud:
-    config:
-      uri: http://localhost:8083
+#  config:
+#    import: optional:configserver:http://localhost:8083
+#  cloud:
+#    config:
+#      uri: http://localhost:8083
   application:
     name: eureka-client
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka
