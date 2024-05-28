@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 20px;
+        }
+
+        #main {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #main:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        td {
+            position: relative;
+        }
+
+        .outH3 {
+            color: #444;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .outDiv {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .outEdit {
+            color: #666;
+            font-size: 18px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .deleteButton {
+            padding: 5px 10px;
+            background-color: #ff4d4f;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            float: right;
+        }
+
+        .deleteButton:hover {
+            background-color: #ff7875;
+        }
+
+        form {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #444;
+        }
+
+        input[type="date"] {
+            padding: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 20px); /* Учитывая отступы */
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div><a th:href="@{/main}" id="main">Main page</a></div>
+
+<div>
+    <h3 class="outH3">Информация</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Телефон</th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="el : ${profileClient}">
+            <td th:text="${el.getFirstName}">Имя</td>
+            <td th:text="${el.getLastName}">Фамилия</td>
+            <td th:text="${el.getPhoneNumber}">Телефон</td>
+            <td th:text="${el.getEmail}">Email</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<form action="/hairdresser/hairdressersWork" method="post">
+    <label for="date">Выберите понедельник недели, на который Вы будете работать:</label>
+    <input type="date" id="date" name="date" required>
+    <button type="submit">Отправить</button>
+</form>
+
+</body>
+</html>

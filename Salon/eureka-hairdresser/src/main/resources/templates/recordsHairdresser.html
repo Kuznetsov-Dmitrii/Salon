@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 20px;
+        }
+
+        #main {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #main:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        td {
+            position: relative;
+        }
+
+        .deleteButton {
+            padding: 5px 10px;
+            background-color: #ff4d4f;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            float: right;
+        }
+
+        .deleteButton:hover {
+            background-color: #ff7875;
+        }
+    </style>
+</head>
+<body>
+<div><a th:href="@{/main}" id="main">Main page</a></div>
+
+<h3 class="outH3">Информация</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Телефон</th>
+        <th>Дата и время</th>
+        <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="el : ${recordsHairdresser}">
+        <td th:text="${el.firstName}">Имя</td>
+        <td th:text="${el.lastName}">Фамилия</td>
+        <td th:text="${el.phoneNumber}">Телефон</td>
+        <td th:text="${#temporals.format(el.localDateTime, 'dd.MM HH:mm')}">Дата и время</td>
+        <td>
+            <form th:action="@{'/hairdresser/record/'+${el.id}+'/remove'}" method="post">
+                <button class="deleteButton" type="submit">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

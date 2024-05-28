@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Расписания работы парикмахеров</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        td {
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .day-column {
+            width: 190px;
+        }
+
+        .hour-column {
+            width: 150px;
+        }
+
+        .hours-column {
+            background-color: #f8f8f8;
+        }
+
+        .table-container {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #007bff;
+        }
+    </style>
+    <script>
+        function sendPostRequest(hairdresserId, time, day, firstDayOfWeek, hairdresserName) {
+            const date = new Date(firstDayOfWeek);
+            const days = {
+                mondayList: 0,
+                tuesdayList: 1,
+                wednesdayList: 2,
+                thursdayList: 3,
+                fridayList: 4
+            };
+            date.setDate(date.getDate() + days[day]);
+            const formattedDate = date.toLocaleDateString('ru-RU', {day: '2-digit', month: '2-digit'});
+
+            const confirmationMessage = `Вы точно хотите записаться на стрижку ${formattedDate} в ${time} к ${hairdresserName}?`;
+            if (confirm(confirmationMessage)) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "/client/addRecords", true);
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.send(JSON.stringify({
+                    hairdresserId: hairdresserId,
+                    time: time,
+                    day: day,
+                    firstDayOfWeek: firstDayOfWeek
+                }));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('td[data-hairdresser-id]').forEach(function (td) {
+                td.addEventListener('click', function () {
+                    const hairdresserId = this.getAttribute('data-hairdresser-id');
+                    const time = this.getAttribute('data-time');
+                    const day = this.getAttribute('data-day');
+                    const firstDayOfWeek = this.getAttribute('data-first-day-of-week');
+                    const hairdresserName = this.closest('.table-container').querySelector('h3').textContent;
+                    sendPostRequest(hairdresserId, time, day, firstDayOfWeek, hairdresserName);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>Расписания работы парикмахеров</h1>
+
+<div th:each="entity : ${dateHairdresserWorkEntities}" class="table-container">
+    <h3 class="outEdit" th:text="${entity.hairdresser.first_name}">Имя парикмахера</h3>
+    <table>
+        <thead>
+        <tr>
+            <th class="day-column">День недели</th>
+            <th class="hour-column">Часы работы</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Понедельник <span
+                    th:text="${#temporals.format(entity.getId().firstDayOfWeek.plusDays(0), 'dd.MM')}"></span></td>
+            <td th:each="hour : ${entity.mondayList}" th:if="${hour.isAfter(T(java.time.LocalDateTime).now())}"
+                th:text="${#temporals.format(hour, 'HH:mm')}"
+                th:attr="data-hairdresser-id=${entity.hairdresser.id},data-time=${#temporals.format(hour, 'HH:mm')},data-day='mondayList',data-first-day-of-week=${entity.id.firstDayOfWeek}">
+                08:00
+            </td>
+        </tr>
+        <tr>
+            <td>Вторник <span th:text="${#temporals.format(entity.getId().firstDayOfWeek.plusDays(1), 'dd.MM')}"></span>
+            </td>
+            <td th:each="hour : ${entity.tuesdayList}" th:if="${hour.isAfter(T(java.time.LocalDateTime).now())}"
+                th:text="${#temporals.format(hour, 'HH:mm')}"
+                th:attr="data-hairdresser-id=${entity.hairdresser.id},data-time=${#temporals.format(hour, 'HH:mm')},data-day='tuesdayList',data-first-day-of-week=${entity.id.firstDayOfWeek}">
+                08:00
+            </td>
+        </tr>
+        <tr>
+            <td>Среда <span th:text="${#temporals.format(entity.getId().firstDayOfWeek.plusDays(2), 'dd.MM')}"></span>
+            </td>
+            <td th:each="hour : ${entity.wednesdayList}" th:if="${hour.isAfter(T(java.time.LocalDateTime).now())}"
+                th:text="${#temporals.format(hour, 'HH:mm')}"
+                th:attr="data-hairdresser-id=${entity.hairdresser.id},data-time=${#temporals.format(hour, 'HH:mm')},data-day='wednesdayList',data-first-day-of-week=${entity.id.firstDayOfWeek}">
+                08:00
+            </td>
+        </tr>
+        <tr>
+            <td>Четверг <span th:text="${#temporals.format(entity.getId().firstDayOfWeek.plusDays(3), 'dd.MM')}"></span>
+            </td>
+            <td th:each="hour : ${entity.thursdayList}" th:if="${hour.isAfter(T(java.time.LocalDateTime).now())}"
+                th:text="${#temporals.format(hour, 'HH:mm')}"
+                th:attr="data-hairdresser-id=${entity.hairdresser.id},data-time=${#temporals.format(hour, 'HH:mm')},data-day='thursdayList',data-first-day-of-week=${entity.id.firstDayOfWeek}">
+                08:00
+            </td>
+        </tr>
+        <tr>
+            <td>Пятница <span th:text="${#temporals.format(entity.getId().firstDayOfWeek.plusDays(4), 'dd.MM')}"></span>
+            </td>
+            <td th:each="hour : ${entity.fridayList}" th:if="${hour.isAfter(T(java.time.LocalDateTime).now())}"
+                th:text="${#temporals.format(hour, 'HH:mm')}"
+                th:attr="data-hairdresser-id=${entity.hairdresser.id},data-time=${#temporals.format(hour, 'HH:mm')},data-day='fridayList',data-first-day-of-week=${entity.id.firstDayOfWeek}">
+                08:00
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

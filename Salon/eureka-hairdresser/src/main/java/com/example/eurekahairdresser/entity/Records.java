@@ -1,4 +1,4 @@
-package com.example.eurekaclient.entity;
+package com.example.eurekahairdresser.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "records")
 public class Records {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

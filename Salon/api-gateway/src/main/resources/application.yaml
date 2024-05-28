@@ -5,12 +5,9 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8081/eureka
+
 spring:
-#  config:
-#    import: optional:configserver:http://localhost:8083
   cloud:
-#    config:
-#      uri: http://localhost:8083
     gateway:
       default-filters: TokenRelay=
       discovery:
@@ -18,16 +15,14 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: test
+        - id: profile-client
           uri: lb://eureka-client
           predicates:
-            - Path=/test
-            - Method=GET
-        - id: driverr-test
-          uri: lb://eureka-client
+            - Path=/client/**
+        - id: profile-hairdresser
+          uri: lb://eureka-hairdresser
           predicates:
-            - Path=/driver
-            - Method=GET
+            - Path=/hairdresser/**
   application:
     name: gateway
   security:
@@ -49,3 +44,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: "http://localhost:8180/realms/salon"
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: TRACE
