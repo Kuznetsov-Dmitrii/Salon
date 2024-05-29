@@ -6,9 +6,8 @@ import com.example.eurekahairdresser.entity.Records;
 import com.example.eurekahairdresser.repository.RecordsRepo;
 import com.example.eurekahairdresser.repository.UserEntityRepo;
 import com.example.eurekahairdresser.service.UserInfoService;
-import lombok.extern.slf4j.Slf4j;
+import com.example.eurekahairdresser.utils.LogUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,27 +17,25 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Controller
 @RequestMapping("/hairdresser")
 public class HairdresserGetController {
     private final UserEntityRepo userEntityRepo;
-
     @Value("${keycloak.realm_id}")
     private String realm_id;
     private final UserInfoService userInfoService;
+    private final LogUtil log;
     private final RecordsRepo recordsRepo;
 
-    public HairdresserGetController(UserEntityRepo userEntityRepo, UserInfoService userInfoService, RecordsRepo recordsRepo) {
+    public HairdresserGetController(UserEntityRepo userEntityRepo, UserInfoService userInfoService, LogUtil log, RecordsRepo recordsRepo) {
         this.userEntityRepo = userEntityRepo;
         this.userInfoService = userInfoService;
+        this.log = log;
         this.recordsRepo = recordsRepo;
     }
 
-
     @GetMapping("/home")
-    public String getHome(Model model) {
-
+    public String getHome() {
         return "home";
     }
 
@@ -48,10 +45,9 @@ public class HairdresserGetController {
         HairdresserDto hairdresserDto = null;
         try {
             hairdresserDto = userEntityRepo.getHairdresserProfile(realm_id,userInfoService.getUserId());
-        } catch (DataAccessException e) {
-            System.err.println("Ошибка доступа к базе данных: " + e.getMessage());
+            log.info(String.format("Парикмахер получил HairdresserDto с userId= %s",userInfoService.getUserId()));
         } catch (Exception e) {
-            System.err.println("Неизвестная ошибка: " + e.getMessage());
+            log.error(String.format("Ошибка получения HairdresserDto с userId= %s. %s",userInfoService.getUserId(),e.getMessage()));
         }
 
         model.addAttribute("profileClient", hairdresserDto);
@@ -61,20 +57,31 @@ public class HairdresserGetController {
 
     @GetMapping("/myRecords")
     public String getRecords(Model model) {
-        List<Records> recordsList=recordsRepo.getRecordsByHairdresser(userInfoService.getUserId(), LocalDateTime.now());
+        List<Records> recordsList=null;
 
-        List<RecordsHairdresserDto> recordsHairdresserDtoList=new ArrayList<>();
-        for (Records record:recordsList){
-            RecordsHairdresserDto recordsHairdresserDto= RecordsHairdresserDto.builder()
-                    .id(record.getId())
-                    .firstName(record.getClient().getFirst_name())
-                    .lastName(record.getClient().getLast_name())
-                    .phoneNumber(userEntityRepo.getPhoneNumberByUserId(record.getClient().getId()))
-                    .localDateTime(record.getLocalDateTime())
-                    .build();
-
-            recordsHairdresserDtoList.add(recordsHairdresserDto);
+        try {
+            recordsList = recordsRepo.getRecordsByHairdresser(userInfoService.getUserId(), LocalDateTime.now());
+            log.info("Парикмахер получил List<Records>");
+        } catch (Exception e) {
+            log.error(String.format("Ошибка получения List<Records>. %s",e.getMessage()));
         }
+
+        List<RecordsHairdresserDto> recordsHairdresserDtoList = new ArrayList<>();
+        if (recordsList!=null) {
+            String phoneNumber="";
+            for (Records record : recordsList) {
+                RecordsHairdresserDto recordsHairdresserDto = RecordsHairdresserDto.builder()
+                        .id(record.getId())
+                        .firstName(record.getClient().getFirst_name())
+                        .lastName(record.getClient().getLast_name())
+                        .phoneNumber(userEntityRepo.getPhoneNumberByUserId(record.getClient().getId()))
+                        .localDateTime(record.getLocalDateTime())
+                        .build();
+
+                recordsHairdresserDtoList.add(recordsHairdresserDto);
+            }
+        }
+        log.info("Парикмахер получил список своих Records.");
         model.addAttribute("recordsHairdresser",recordsHairdresserDtoList);
 
         return "recordsHairdresser";

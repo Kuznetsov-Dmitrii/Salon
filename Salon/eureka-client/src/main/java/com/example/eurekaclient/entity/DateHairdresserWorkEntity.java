@@ -30,7 +30,7 @@ public class DateHairdresserWorkEntity {
     @EmbeddedId
     private DateHairdresserWorkId id;
 
-    @MapsId("hairdresserId") // Maps the 'hairdresserId' part of the embedded ID
+    @MapsId("hairdresserId")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hairdresser_id", referencedColumnName = "id")
     private UserEntity hairdresser;

@@ -53,12 +53,5 @@ public interface DateHairdresserWorkRepo extends JpaRepository<DateHairdresserWo
     @Query(value = "SELECT * FROM hairdresser_work\n" +
             "WHERE first_day_of_week >= :date", nativeQuery = true)
     List<DateHairdresserWorkEntity> allDateHairdresserWorkEntityByFirstDay(@Param("date") LocalDate localDate);
-//    @Query(value = "select * from public.hairdresser_work\n" +
-//            "    where hairdresser_id=:id\n" +
-//            "    and first_day_of_week = :date", nativeQuery = true)
-//    DateHairdresserWorkEntity findDateHairdresserWorkEntityById(@Param("id") String id,@Param("date") LocalDate localDate);
-
-
-
 
 }

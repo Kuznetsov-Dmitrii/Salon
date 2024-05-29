@@ -5,6 +5,13 @@ server:
 keycloak:
   realm_id: c605f551-0683-47d1-bf82-7306fc5e16ca
 
+url:
+  log-server: http://localhost:8084/api/data
+
+encryption:
+  message: epdlsmce
+  salt: qpeitnzm
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/keycloak
@@ -13,12 +20,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     generate-ddl: true
-    show-sql: true # Uncomment to enable SQL logging
-#      database: postgresql
-#      open-in-view: false
-#      properties:
-#        hibernate:
-#          default_schema: salon
+    show-sql: true
   security:
     oauth2:
       resourceserver:
@@ -33,7 +35,7 @@ eureka:
     service-url:
       defaultZone: http://localhost:8081/eureka
 
-logging:
-  level:
-    org.springframework.security: TRACE
-    org.springframework.security.oauth2: TRACE
+#logging:
+#  level:
+#    org.springframework.security: TRACE
+#    org.springframework.security.oauth2: TRACE
